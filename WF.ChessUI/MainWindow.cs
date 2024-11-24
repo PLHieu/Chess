@@ -7,8 +7,12 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 using System.Threading;
 using System.Windows.Forms;
+using System.Text.Json;
+using System.Xml.Serialization;
 
 namespace WF.ChessUI
 {
@@ -28,11 +32,17 @@ namespace WF.ChessUI
         private ManualResetEvent canExecuteEvent = new ManualResetEvent(true);
         private Thread ExecutionThread;
 
-        public MainWindow(string role, IPAddress ipToConnect, int port)
+        // các biến này phục vụ cho việc chơi với bot
+        private bool botMode = false;
+        string botEngine = "minimax";
+
+        public MainWindow(string role, IPAddress ipToConnect, int port, bool botmode = false)
         {
             InitializeComponent();
             LoadBoardImage();
             InitializeBoard();
+
+            this.botMode = botmode;
 
             if (role == "server")
             {
@@ -50,7 +60,7 @@ namespace WF.ChessUI
             }
 
             // Look here AnhThu!
-            while (!hasConnected && role != "other")
+            while (!hasConnected && role != "other" && botmode == false)
             {
                 // Replace these MessageBox with something more visually appealing 
                 // Add the loading animation under the text too
@@ -60,11 +70,11 @@ namespace WF.ChessUI
                     MessageBox.Show("Connecting to server, please wait!");
             }
 
-            gameState = new GameState(currentPlayer, Board.Initial(), role, server, client);
+            gameState = new GameState(currentPlayer, Board.Initial(), role, server, client, botmode);
 
             ExecutionThread = new Thread(HandleExecution);
             ExecutionThread.Start();
-            
+
             DrawBoard(gameState.Board);
 
             // Replace these MessageBox too
@@ -209,7 +219,7 @@ namespace WF.ChessUI
         {
             if (canExecuteEvent.WaitOne(0) == false)
                 return;
-            
+
             Piece piece = gameState.Board[pos];
 
             if (piece == null) return;
@@ -236,7 +246,130 @@ namespace WF.ChessUI
                 else
                     HandleMove(move);
             }
+
+            // nếu như đang chơi với bot thì lúc này cần bot đi bước tiếp theo 
+            if (botMode)
+            {
+                Move nextBotMove = GetNextMoveFromBot();
+                if (nextBotMove.Type == MoveType.PawnPromotion)
+                    HandlePromotion(nextBotMove.FromPos, nextBotMove.ToPos, (PawnPromotion)nextBotMove);
+                else
+                    HandleMove(nextBotMove);
+            }
         }
+
+        // nhận vào state của bàn cờ, current player và outpput ra 1 move tiếp theo
+        private Move GetNextMoveFromBot()
+        {
+            // nếu bot là minimaxAI thì gọi thuat toan minimax
+            if (botEngine == "minimax")
+            {
+                return GetNextMoveFromMiniMaxEngine(gameState, 5000);
+            }
+
+
+            // TODO nếu bot là chatGPT thì gọi API chatGPT
+            return null;
+        }
+
+        private Move GetNextMoveFromMiniMaxEngine(GameState gameState, int maxTimeMs)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            int depth = 3; // Initial depth; you may want to increase this for better decisions.
+            Move bestMove = null;
+            int bestValue = int.MinValue;
+
+            IEnumerable<Move> possibleMoves = gameState.AllLegalMovesFor(gameState.CurrentPlayer);
+            foreach (Move move in possibleMoves)
+            {
+                GameState newState = gameState.DeepCopyGameState();
+                newState.MakeMove(move);
+
+                int moveValue = Minimax(newState, depth - 1, true, int.MinValue, int.MaxValue, stopwatch, maxTimeMs);
+
+                if (moveValue > bestValue)
+                {
+                    bestValue = moveValue;
+                    bestMove = move;
+                }
+
+                if (stopwatch.ElapsedMilliseconds >= maxTimeMs)
+                {
+                    break; // Stop if we run out of time
+                }
+            }
+
+            stopwatch.Stop();
+            return bestMove;
+        }
+
+        private int Minimax(GameState gameState, int depth, bool isMaximizingPlayer, int alpha, int beta, Stopwatch stopwatch, int maxTimeMs)
+        {
+            if (depth == 0 || gameState.IsGameOver() || stopwatch.ElapsedMilliseconds >= maxTimeMs)
+            {
+                return EvaluateBoard(gameState);
+            }
+
+            IEnumerable<Move> possibleMoves = gameState.AllLegalMovesFor(isMaximizingPlayer ? gameState.CurrentPlayer : gameState.CurrentPlayer.Opponent());
+
+            if (isMaximizingPlayer)
+            {
+                int maxEval = int.MinValue;
+                foreach (Move move in possibleMoves)
+                {
+                    GameState newState = gameState.DeepCopyGameState();
+                    newState.MakeMove(move);
+                    int eval = Minimax(newState, depth - 1, true, alpha, beta, stopwatch, maxTimeMs);
+                    maxEval = Math.Max(maxEval, eval);
+                    alpha = Math.Max(alpha, eval);
+                    if (beta <= alpha)
+                    {
+                        break; // Beta cut-off
+                    }
+
+                    if (stopwatch.ElapsedMilliseconds >= maxTimeMs)
+                    {
+                        break; // Stop if we run out of time
+                    }
+                }
+                return maxEval;
+            }
+            else
+            {
+                int minEval = int.MaxValue;
+                foreach (Move move in possibleMoves)
+                {
+                    GameState newState = gameState.DeepCopyGameState();
+                    newState.MakeMove(move);
+                    int eval = Minimax(newState, depth - 1, false, alpha, beta, stopwatch, maxTimeMs);
+                    minEval = Math.Min(minEval, eval);
+                    beta = Math.Min(beta, eval);
+                    if (beta <= alpha)
+                    {
+                        break; // Alpha cut-off
+                    }
+
+                    if (stopwatch.ElapsedMilliseconds >= maxTimeMs)
+                    {
+                        break; // Stop if we run out of time
+                    }
+                }
+                return minEval;
+            }
+        }
+
+
+
+        private int EvaluateBoard(GameState gameState)
+        {
+            // This is a placeholder evaluation function. You would need to implement a more detailed evaluation.
+            // Positive values favor the maximizing player, negative values favor the minimizing player.
+            return gameState.EvaluateBoard(gameState);
+        }
+
+
 
         private void ShowGameOverMenu(Result result)
         {
@@ -275,7 +408,7 @@ namespace WF.ChessUI
                 DrawBoard(gameState.Board);
                 if (gameState.IsGameOver())
                 {
-                    ShowGameOverMenu(gameState.Result);  
+                    ShowGameOverMenu(gameState.Result);
                 }
                 return;
             }

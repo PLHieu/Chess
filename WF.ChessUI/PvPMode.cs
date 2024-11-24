@@ -44,7 +44,7 @@ namespace WF.ChessUI
         // Sự kiện khi nhấn nút SingleDeviceButton
         private void SingleDeviceButton_Click(object sender, EventArgs e)
         {
-            // To be modified later, im so fcking tired
+            // TODO be modified later, im so fcking tired
             MainWindow mainWindow = new MainWindow("other", null, 0);
             mainWindow.Show();
             this.Hide();

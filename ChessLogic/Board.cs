@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,29 @@ namespace ChessLogic
             { Player.White, null },
             { Player.Black, null },
         };
+
+        public Board DeepCopyBoard()
+        {
+            // Deep copy each attribute manually
+            Board copy = new Board();
+            for (int r = 0; r < 8; r++)
+            {
+                for (int c = 0; c < 8; c++)
+                {
+                    if (pieces[r, c] == null)
+                    {
+                        copy.pieces[r, c] = null;
+                    }
+                    else
+                    {
+                        copy.pieces[r, c] = pieces[r, c].Copy();
+                    }
+                }
+            }
+
+            return copy;
+        }
+
 
         // Indexer which allows objects to be accessed like array
         // The type of "value" matches the return type of the indexer

@@ -47,7 +47,17 @@ namespace WF.ChessUI
 
         private void PvEButton_Click(object sender, EventArgs e)
         {
-
+            MainWindow mainWindow = new MainWindow("other", null, 0, true);
+            mainWindow.Show();
+            this.Hide();
+            mainWindow.FormClosed += (s, args) =>
+            {
+                // Kiểm tra MainWindow có bị disposed không trước khi gọi Close
+                if (mainWindow != null && !mainWindow.IsDisposed)
+                {
+                    this.Close();
+                }
+            };
         }
     }
 }

@@ -37,5 +37,10 @@ namespace ChessLogic
         {
             return new Direction(dir.RowDelta * scalar, dir.ColumnDelta * scalar);
         }
+
+        public static readonly Direction[] dirs = new Direction[]
+       {
+            North, South, East, West, NorthEast, NorthWest, SouthEast, SouthWest
+       };
     }
 }
