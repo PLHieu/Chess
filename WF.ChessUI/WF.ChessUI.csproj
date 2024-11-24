@@ -1,0 +1,134 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Photos\BishopB.png" />
+    <None Remove="Photos\BishopW.png" />
+    <None Remove="Photos\Board.png" />
+    <None Remove="Photos\CursorB.cur" />
+    <None Remove="Photos\CursorW.cur" />
+    <None Remove="Photos\icon.ico" />
+    <None Remove="Photos\KingB.png" />
+    <None Remove="Photos\KingW.png" />
+    <None Remove="Photos\KnightB.png" />
+    <None Remove="Photos\KnightW.png" />
+    <None Remove="Photos\PawnB.png" />
+    <None Remove="Photos\PawnW.png" />
+    <None Remove="Photos\QueenB.png" />
+    <None Remove="Photos\QueenW.png" />
+    <None Remove="Photos\RookB.png" />
+    <None Remove="Photos\RookW.png" />
+    <None Remove="Resources\BishopB.png" />
+    <None Remove="Resources\BishopW.png" />
+    <None Remove="Resources\Board.png" />
+    <None Remove="Resources\KingB.png" />
+    <None Remove="Resources\KingW.png" />
+    <None Remove="Resources\KnightB.png" />
+    <None Remove="Resources\KnightW.png" />
+    <None Remove="Resources\PawnB.png" />
+    <None Remove="Resources\PawnW.png" />
+    <None Remove="Resources\QueenB.png" />
+    <None Remove="Resources\QueenW.png" />
+    <None Remove="Resources\RookB.png" />
+    <None Remove="Resources\RookW.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ChessLogic\ChessLogic.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Photos\BishopB.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Photos\BishopW.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Photos\Board.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Photos\CursorB.cur">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Photos\CursorW.cur">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Photos\icon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Photos\KingB.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Photos\KingW.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Photos\KnightB.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Photos\KnightW.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Photos\PawnB.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Photos\PawnW.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Photos\QueenB.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Photos\QueenW.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Photos\RookB.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Photos\RookW.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Resources\BishopB.png" />
+    <Resource Include="Resources\BishopW.png" />
+    <Resource Include="Resources\Board.png" />
+    <Resource Include="Resources\KingB.png" />
+    <Resource Include="Resources\KingW.png" />
+    <Resource Include="Resources\KnightB.png" />
+    <Resource Include="Resources\KnightW.png" />
+    <Resource Include="Resources\PawnB.png" />
+    <Resource Include="Resources\PawnW.png" />
+    <Resource Include="Resources\QueenB.png" />
+    <Resource Include="Resources\QueenW.png" />
+    <Resource Include="Resources\RookB.png" />
+    <Resource Include="Resources\RookW.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Resource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+</Project>
